@@ -1,0 +1,48 @@
+% !TEX program = xelatex
+
+\documentclass[a4paper]{article}
+
+% \usepackage{cmap}           % Not Required for XeLaTeX
+% \usepackage[T1]{fontenc}    % Not Required for XeLaTeX
+% \usepackage{lmodern}        % Not Required for XeLaTeX
+% \usepackage[utf8]{inputenc} % Not Required for XeLaTeX
+\usepackage{fontspec}
+\usepackage{newcomputermodern}
+\usepackage{graphicx}
+\usepackage{microtype}
+
+\usepackage[ngerman]{babel}
+
+\usepackage{textcomp}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{siunitx}
+% \pagenumbering{gobble} % No page numbers
+
+\usepackage{blindtext}
+\usepackage{todonotes}
+\usepackage{float}
+
+\begin{document}
+\Blindtext[1]
+\begin{figure}[t]
+    \includegraphics[width=\textwidth]{example-image-duck}
+    \caption{float t}
+\end{figure}
+\Blindtext[1]
+\clearpage
+\Blindtext[1]
+\begin{figure}[H]
+    \includegraphics[width=\textwidth]{example-image-duck}
+    \caption{float H}
+\end{figure}
+\Blindtext[1]
+\clearpage
+\Blindtext[1]
+\begin{figure}[b!]
+    \includegraphics[width=\textwidth]{example-image-duck}
+    \caption{float b!}
+\end{figure}
+\Blindtext[1]
+\end{document}
+

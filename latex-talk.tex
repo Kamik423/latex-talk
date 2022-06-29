@@ -1,0 +1,1430 @@
+% !TEX program = xelatex
+
+\PassOptionsToPackage{fleqn,tbtags}{amsmath}
+\documentclass[handout]{beamer}
+
+% Font settings
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{newcomputermodern}
+\setmainfont[Numbers=OldStyle]{NewComputerModern10-Book}
+% \setmonofont[SmallCapsFeatures={Numbers=OldStyle}]{Latin Modern Mono Light}
+
+% Language
+\usepackage[ngerman]{babel}
+
+% Symbols and graphics I'll use
+\usepackage{textcomp}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\sisetup{per-mode=symbol}
+\usepackage{metalogo}
+\usepackage{mleftright}
+\usepackage[ISO,spaced]{diffcoeff}
+\usepackage{qrcode}
+\usepackage{soul}
+\usepackage[os=win]{menukeys}
+\usepackage{bookmark}
+\usepackage{etoolbox}
+\usepackage{todonotes}
+
+% Drawing stuff
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{pgfplots}
+\usepgfplotslibrary{groupplots,dateplot}
+\usetikzlibrary{patterns,shapes.arrows}
+\pgfplotsset{compat=newest}
+
+% Define some colors that will be reused
+\definecolor{comment}{HTML}{d8dadc}
+\definecolor{string}{HTML}{657153}
+\definecolor{unired}{HTML}{9e2b25}
+\definecolor{uniblue}{HTML}{063d79}
+\definecolor{uniorange}{HTML}{FFBA08}
+
+% Layouting stuff
+\usepackage{relsize}
+\usepackage{ragged2e}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{array}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\usepackage{bytefield}
+\usepackage{subcaption}
+\usepackage{multicol}
+
+\renewcommand{\arraystretch}{1.5}
+% Beamer settings
+\usetheme{Frankfurt}
+\useinnertheme{default}
+\useoutertheme{default}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
+\usefonttheme{professionalfonts}
+\usefonttheme{serif}
+\setbeamercolor{title}{bg=uniblue,fg=white}
+\setbeamercolor{frametitle}{bg=uniblue, fg=white}
+% \setbeamercolor{section in head/foot}{fg=black, bg=white}
+% \usepackage{pgfpages}
+% \setbeameroption{show notes on second screen}
+
+% Title page to insert before each section
+\newcommand\sectiontitlepage{
+    \miniframesoff
+    \begin{frame}
+        \vfill
+        \centering
+        \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+            \usebeamerfont{title}\insertsectionhead\par%
+        \end{beamercolorbox}
+        \vfill
+    \end{frame}
+    \miniframeson
+}
+
+% Disable top bullets on title pages and appendix
+\makeatletter
+\let\beamer@writeslidentry@miniframeson=\beamer@writeslidentry
+\def\beamer@writeslidentry@miniframesoff{%
+    \expandafter\beamer@ifempty\expandafter{\beamer@framestartpage}{}% does not happen normally
+    {%else
+        % removed \addtocontents commands
+        \clearpage\beamer@notesactions%
+    }
+}
+\newcommand*{\miniframeson}{\let\beamer@writeslidentry=\beamer@writeslidentry@miniframeson}
+\newcommand*{\miniframesoff}{\let\beamer@writeslidentry=\beamer@writeslidentry@miniframesoff}
+\makeatother
+
+% Math commands used in equations
+\DeclareMathOperator{\atan}{atan}
+\DeclareMathOperator{\dd}{d}
+\DeclareMathOperator*{\argmax}{argmax}
+\newcommand{\e}{\mathrm{e}}
+\renewcommand{\i}{\mathrm{i}}
+\newcommand{\mat}[1]{\mathbfit{#1}}
+
+% PDF Table of contents, very helpful for slides ordering
+\hypersetup{bookmarksopen=true,bookmarksopenlevel=4}
+\makeatletter
+\apptocmd{\beamer@@frametitle}{\only<1>{\bookmark[page=\the\c@page,level=3]{#1}}}%
+{\message{** patching of \string\beamer@@frametitle succeeded **}}%
+{\message{** patching of \string\beamer@@frametitle failed **}}%
+\makeatother
+
+% Code support. Look up listings for LaTeX if you need it but dont konw it.
+\RequirePackage{listings}
+\lstdefinelanguage{latex}{moretexcs={frac,pm,sqrt,begin,end,cdot,epsilon,theta,rho,phi,varepsilon,vartheta,varrho,varphi,sin,cos,tan,mathit,mathrm,i,e},morekeywords={{\,}}}[keywords,tex,comments,]
+% Prevent copying of line numbers
+\RequirePackage{accsupp}
+\newcommand{\emptyaccsupp}[1]{\BeginAccSupp{method=escape,ActualText=}#1\EndAccSupp{}}
+% Custom style to use for listings
+\lstdefinestyle{customstyle}{
+    belowcaptionskip=1\baselineskip,
+    breaklines=true,
+    xleftmargin=0pt,
+    showstringspaces=false,
+    basicstyle=\small\ttfamily,
+    keywordstyle=[1]{\color{uniblue}},
+    texcsstyle=*\color{uniblue},
+    keywordstyle=[2]{\color{unired}},
+    keywordstyle=[3]{\color{yellow}},
+    keywordstyle=[4]{\color{green}},
+    commentstyle=\color{comment},
+    identifierstyle=\color{black},
+    stringstyle=\color{string},
+    numbers=left,
+    numberstyle=\tiny\ttfamily\color{comment}\emptyaccsupp,
+    basewidth=0.5em,
+    columns=fixed,
+    language=[LaTeX]{TeX},
+    moretexcs={
+            frac,pm,sqrt,begin,end,cdot,epsilon,theta,rho,phi,varepsilon,vartheta,varrho,varphi,
+            mat,sin,cos,tan,atan,argmax,mathit,mathrm,mathbf,i,e,dd,text,
+            mleft,mright,diff,dl,dl3,DeclareMathOperator,\,,@,
+            newcommand,renewcommand,ifxetex,symbfup,usepackage,mathbfit,mathfrak,F,
+            DeclareSIUnit,beat,per,second,gram,qty,kilo,hertz,num,sisetup,milli,meter,qtyproduct,degree,celsius,ang,
+            toprule,midrule,cmidrule,bottomrule,transpose,intercal,nonfrenchspacing,
+            wordbox,bitbox,bitheader,menu,keys,directory,ctrl,arrowkeyup,cref,missingfigure,todo,
+        },
+}
+\lstset{style=customstyle}
+
+% Color boxes with red bar or orange bar
+\usepackage[skins]{tcolorbox}
+\newtcolorbox{wrong}{
+    colback=white,
+    nobeforeafter,
+    freelance,
+    frame hidden,
+    boxrule=0pt,
+    boxsep=0pt,
+    top=0pt,bottom=0pt,
+    left=0pt,
+    frame code={\draw[unired,ultra thick,line cap=round]([xshift=1em,yshift=0.5ex]frame.north east) -- ([xshift=1em,yshift=-0.5ex]frame.south east);},
+}
+\newtcolorbox{kindawrong}{
+    colback=white,
+    nobeforeafter,
+    freelance,
+    frame hidden,
+    boxrule=0pt,
+    boxsep=0pt,
+    top=0pt,bottom=0pt,
+    left=0pt,
+    frame code={\draw[uniorange,ultra thick,line cap=round]([xshift=1em,yshift=0.5ex]frame.north east) -- ([xshift=1em,yshift=-0.5ex]frame.south east);},
+}
+% Kinda wrong horizontal rule
+\newcommand{\kwrule}{
+    \begin{tikzpicture}
+        \draw[uniorange,ultra thick,line cap=round](0,0) -- (\linewidth,0);
+    \end{tikzpicture}
+}
+% Wrong horizontal rule
+\newcommand{\wrongrule}{
+    \begin{tikzpicture}
+        \draw[unired,ultra thick,line cap=round](0,0) -- (\linewidth,0);
+    \end{tikzpicture}
+}
+% Invisible horizontal rule for spacing hacks
+\newcommand{\invisirule}{
+    \begin{tikzpicture}
+        \draw[white,ultra thick,line cap=round](0,0) -- (\linewidth,0);
+    \end{tikzpicture}
+}
+
+\begin{document}
+\title{Du setzt deine \LaTeX-Formeln falsch}
+\subtitle{Normen, Styleguides und Nitpicks}
+\author{Hans Schülein}
+\institute{Offenes Informatikkolloquium \textperiodcentered{} Lightning Talks}
+\date{Sommersemester 2022}
+
+\begin{frame}[fragile]
+    \titlepage
+\end{frame}
+
+% == == == == == == == == == == == == == == == == == == == == == == == == == == == ==
+\section{Einführung}
+
+\begin{frame}[fragile]
+    \frametitle{\LaTeX}
+    \begin{lstlisting}
+\begin{equation*}
+    x_1, x_2 = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+\end{equation*}
+    \end{lstlisting}
+
+    \begin{equation*}
+        x_1, x_2 = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+    \end{equation*}
+\end{frame}
+
+% Fair use of the styleguide images because I am discussing them.
+\begin{frame}[fragile]
+    \frametitle{Styleguides}
+    \begin{tabularx}{\textwidth}{@{}C@{}C@{}C@{}C@{}C@{}}
+        \includegraphics[height=0.25\textwidth]{images/styleguides/apa}  &
+        \includegraphics[height=0.25\textwidth]{images/styleguides/cmos} &
+        \includegraphics[height=0.25\textwidth]{images/styleguides/ieee} &
+        \includegraphics[height=0.25\textwidth]{images/styleguides/din}  &
+        \includegraphics[height=0.25\textwidth]{images/styleguides/iso}    \\[-2ex]
+        \tiny\url{apastyle.apa.org}                                      &
+        \tiny\url{press.uchicago.edu}                                    &
+        \tiny\url{ieee.org}                                              &
+        \tiny\url{webstore.ansi.org}                                     &
+        \tiny\url{en-standard.eu}
+    \end{tabularx}
+
+    \includegraphics[height=0.32\textwidth]{images/iso-extract}\hfill
+    \includegraphics[height=0.32\textwidth]{images/din-extract}
+\end{frame}
+
+% == == == == == == == == == == == == == == == == == == == == == == == == == == == ==
+\section{Mathematische Notation}
+
+\sectiontitlepage
+
+\begin{frame}[fragile]
+    \frametitle{Multiplikationspunkt}
+    \begin{wrong}
+        \begin{lstlisting}
+\frac{-b \pm \sqrt{b^2 - 4 * a * c}}{2 * a}
+        \end{lstlisting}
+    \end{wrong}
+    \pause
+    \begin{wrong}
+        \begin{equation*}
+            \frac{-b \pm \sqrt{b^2 - 4 * a * c}}{2 * a}
+        \end{equation*}
+    \end{wrong}
+    \pause
+    \begin{lstlisting}
+\frac{-b \pm \sqrt{b^2 - 4 \cdot a \cdot c}}{2 \cdot a}
+\frac{-b \pm \sqrt{b^2 - 4 a c}}{2 a}
+\frac{-b \pm \sqrt{b^2 - 4 \, a \, c}}{2 \, a}
+    \end{lstlisting}
+
+    \begin{equation*}
+        \frac{-b \pm \sqrt{b^2 - 4 \cdot a \cdot c}}{2 \cdot a}
+        \qquad
+        \frac{-b \pm \sqrt{b^2 - 4 a c}}{2 a}
+        \qquad
+        \frac{-b \pm \sqrt{b^2 - 4 \, a \, c}}{2 \, a}
+    \end{equation*}
+    \pause
+    % Hard coded coordinates. I know.
+    \begin{tikzpicture}[remember picture, overlay]
+        \draw[->, thick, color=unired] ($(current page.east)-(6em,8ex)$)  node[outer sep=0.2ex,rotate=20,anchor=east] {\Large\bfseries Falsch} to[out=20,in=-100] ($(current page.east) + (-1.6em,1ex)$);
+    \end{tikzpicture}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Symbolvarianten}
+    \begin{tabularx}{\textwidth}{@{}CCCC@{}}
+        \lstinline{\\epsilon} & \lstinline{                                                                                                                                                         \\theta} & \lstinline{\\rho} & \lstinline{\\phi}          \\
+        $\mathlarger{\mathlarger{\mathlarger\epsilon}}$ & $\mathlarger{\mathlarger{\mathlarger\theta}}$ & $\mathlarger{\mathlarger{\mathlarger\rho}}$ & $\mathlarger{\mathlarger{\mathlarger\phi}}$ \\
+    \end{tabularx}\\[2ex]
+
+    \pause
+
+    \begin{tabularx}{\textwidth}{@{}CCCC@{}}
+        \lstinline{\\varepsilon} & \lstinline{                                                                                                                                                                  \\vartheta} & \lstinline{\\varrho} & \lstinline{\\varphi}          \\
+        $\mathlarger{\mathlarger{\mathlarger\varepsilon}}$ & $\mathlarger{\mathlarger{\mathlarger\vartheta}}$ & $\mathlarger{\mathlarger{\mathlarger\varrho}}$ & $\mathlarger{\mathlarger{\mathlarger\varphi}}$ \\
+    \end{tabularx}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Konventionelle Zeichen}
+    \begin{wrong}
+        \begin{lstlisting}
+x = log_2 n \cdot sin n
+sin^2 \theta + cos^2 \theta = 1
+        \end{lstlisting}
+    \end{wrong}
+
+    \pause
+
+    \begin{wrong}
+        \begin{equation*}
+            x = log_2 n \cdot sin n \qquad sin^2 \theta + cos^2 \theta = 1
+        \end{equation*}
+    \end{wrong}\\[2ex]
+
+    \pause
+
+    \begin{lstlisting}
+x = \log_2 n \cdot \sin n
+\sin^2 \theta + \cos^2 \theta = 1
+        \end{lstlisting}
+    \begin{equation*}
+        x = \log_2 n \cdot \sin n \qquad \sin^2 \theta + \cos^2 \theta = 1
+    \end{equation*}\\[2ex]
+
+    \pause
+
+    \begin{lstlisting}
+\DeclareMathOperator{\atan}{atan} % Preamble
+\DeclareMathOperator*{\argmax}{argmax} % Preamble
+\atan x
+\argmax_\theta f(x)
+        \end{lstlisting}
+    \begin{equation*}
+        \min \quad \sin \quad \cos \quad \tan \quad \arctan \quad \log \quad \lg \quad \ln \quad \atan x \quad \argmax_\theta f(x)
+    \end{equation*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Indexstellung}%
+    \vspace*{-1ex}
+    \begin{wrong}
+        \begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+v_e=\sqrt{\frac{2GM_{Earth}}{r_{spacecraft}}}
+        \end{lstlisting}
+        \begin{equation*}
+            v_e=\sqrt{\frac{2GM_{Earth}}{r_{spacecraft}}}
+        \end{equation*}
+    \end{wrong}
+    \pause
+    \begin{wrong}
+        \begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+v_e=\sqrt{\frac{2GM_\mathit{Earth}}{r_\mathit{spacecraft}}}
+        \end{lstlisting}
+        \begin{equation*}
+            v_e=\sqrt{\frac{2GM_\mathit{Earth}}{r_\mathit{spacecraft}}}
+        \end{equation*}
+    \end{wrong}
+    \pause
+    \begin{wrong}
+        \begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+v_\text{e}=\sqrt{\frac{2GM_\text{Earth}}{r_\text{spacecraft}}}
+        \end{lstlisting}
+        \begin{equation*}
+            v_\text{e}=\sqrt{\frac{2GM_\text{Earth}}{r_\text{spacecraft}}}
+        \end{equation*}
+    \end{wrong}
+    \pause
+    \begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+v_\mathrm{e}=\sqrt{\frac{2GM_\mathrm{Earth}}{r_\mathrm{spacecraft}}}
+    \end{lstlisting}
+    \begin{equation*}
+        v_\mathrm{e} = \sqrt{\frac{2GM_\mathrm{Earth}}{r_\mathrm{spacecraft}}}
+    \end{equation*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Indexstellung \textsc{ii}}%
+    \begin{lstlisting}
+\mat a \cdot \mat b = \sum_{i=1}^n a_i b_i
+    \end{lstlisting}
+    \begin{equation*}
+        \mat a \cdot \mat b = \sum_{i=1}^n a_i b_i
+    \end{equation*}
+
+    \begin{lstlisting}
+a_\mathrm{max} = \max(a_1, \dots, a_n)
+    \end{lstlisting}
+    \begin{equation*}
+        a_\mathrm{max} = \max(a_1, \dots, a_n)
+    \end{equation*}
+
+    \begin{lstlisting}
+\gamma_\mathrm{n} = \frac{P_\mathrm{s}}{P_\mathrm{n}}
+    \end{lstlisting}
+    \begin{equation*}
+        \gamma_\mathrm{n} = \frac{P_\mathrm{s}}{P_\mathrm{n}}
+    \end{equation*}
+
+    \begin{lstlisting}
+a_{i, \mathrm{max}}
+    \end{lstlisting}
+    \begin{equation*}
+        a_{i, \mathrm{max}}
+    \end{equation*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Spezielle Konstanten}
+    \begin{equation*}
+        \mathlarger{\mathlarger{\mathlarger\e^{\pi \i} + 1 = 0}}
+    \end{equation*}
+    \begin{lstlisting}
+\newcommand{\e}{\mathrm{e}} % Preamble
+\renewcommand{\i}{\mathrm{i}} % Preamble
+    \end{lstlisting}
+    ~
+
+    \pause
+    Nach \textsc{din} und \textsc{iso} sogar aufrechtes Pi:
+    \begin{equation*}
+        \mathlarger{\mathlarger{\mathlarger\e^{\mathrm{π} \i} + 1 = 0}}
+    \end{equation*}\\[2ex]
+
+    \pause
+    Nach \textsc{apa} sind alle griechischen Buchstaben aufrecht zu setzen.\\[2ex]
+
+    \pause
+    \LaTeX{} Standard:
+    \begin{tabularx}{\textwidth}{@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}C@{}}
+        $\alpha$ & $\beta$ & $\gamma$ & $\delta$ & $\epsilon$ & $\zeta$ & $\eta$ & $\theta$ & $\iota$ & $\kappa$ & $\lambda$ & $\mu$ & $\nu$ & $\xi$ & $\omicron$ & $\pi$ & $\rho$ & $\sigma$ & $\tau$ & $\upsilon$ & $\phi$ & $\chi$ & $\psi$ & $\omega$ \\
+        $\Alpha$ & $\Beta$ & $\Gamma$ & $\Delta$ & $\Epsilon$ & $\Zeta$ & $\Eta$ & $\Theta$ & $\Iota$ & $\Kappa$ & $\Lambda$ & $\Mu$ & $\Nu$ & $\Xi$ & $\Omicron$ & $\Pi$ & $\Rho$ & $\Sigma$ & $\Tau$ & $\Upsilon$ & $\Phi$ & $\Chi$ & $\Psi$ & $\Omega$ \\
+    \end{tabularx}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Doch Text in Mathe}
+    \begin{lstlisting}
+\Lambda(x) = \begin{cases}
+    1 - |x| & \text{if\ } |x| < 1 \,, \\
+    0       & \text{otherwise}      .
+\end{cases}
+    \end{lstlisting}
+    \begin{equation*}
+        \Lambda(x) = \begin{cases}
+            1 - |x| & \text{if\ } |x| < 1 \,, \\
+            0       & \text{otherwise}      .
+        \end{cases}
+    \end{equation*}
+
+    \pause
+
+    \begin{lstlisting}
+f(n) = \begin{cases}
+    n/2\,,    & n \text{ is even} ; \\
+    3n + 1\\, & n \text{ is odd}  .
+\end{cases}
+    \end{lstlisting}
+    \begin{equation*}
+        f(n) = \begin{cases}
+            n/2\,,    & n \text{ is even} ; \\
+            3n + 1\,, & n \text{ is odd}  .
+        \end{cases}
+    \end{equation*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Vektoren}%
+    \begin{lstlisting}
+\vec a \cdot \vec b = \sum_{i=1}^n a_i b_i
+    \end{lstlisting}
+    \begin{equation*}
+        \vec a \cdot \vec b = \sum_{i=1}^n a_i b_i
+    \end{equation*}
+
+    \pause
+
+    \begin{lstlisting}
+\newcommand{\mat}[1]{\mathbfit{#1}} % Preamble
+\mat a \cdot \mat b = \sum_{i=1}^n a_i b_i
+    \end{lstlisting}
+    \begin{equation*}
+        \mat a \cdot \mat b = \sum_{i=1}^n a_i b_i
+    \end{equation*}
+
+    \pause
+
+    \textbf{Nach \textsc{iso} 80000-2:}
+    \begin{itemize}
+        \item Skalar $a$\,,
+        \item Vektor $\mat a$ oder $\vec a$\,,
+        \item Matrix oder Tensor $\mat A$ oder \smash{$\vec{\vec{A}}$}\,,
+        \item Vektorelement $a_i$ oder Tensorelement $A_{ij}$\,;
+        \item Einheitsvektor in die Richtung von $\mat a$, $\mat e_{\mat a}$\,, aber auch $\mat e_x$\,.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Klammergrößen}%
+    \begin{wrong}
+        \begin{lstlisting}
+t' = \gamma \cdot ( t - \frac{vx}{c^2} )
+    \end{lstlisting}
+        \begin{equation*}
+            t' = \gamma \cdot ( t - \frac{vx}{c^2} )
+        \end{equation*}
+    \end{wrong}
+
+    \pause
+
+    \begin{lstlisting}
+t' = \gamma \cdot \left( t - \frac{vx}{c^2} \right)
+    \end{lstlisting}
+    \begin{equation*}
+        t' = \gamma \cdot \left( t - \frac{vx}{c^2} \right)
+    \end{equation*}
+
+    \pause
+
+    \begin{lstlisting}
+\Bigg( \bigg( \Big( \big( x \big) \Big) \bigg) \Bigg)
+    \end{lstlisting}
+    \begin{equation*}
+        \Bigg( \bigg( \Big( \big( x \big) \Big) \bigg) \Bigg)
+    \end{equation*}
+
+    \pause
+
+    \begin{lstlisting}
+f (x + 2) \cdot f \left( \frac{x}{2} + 2 \right)
+    \end{lstlisting}
+    \begin{equation*}
+        f (x + 2) \cdot f \left( \frac{x}{2} + 2 \right) \qquad\pause f (x + 2) \cdot f \mleft( \frac{x}{2} + 2 \mright)
+    \end{equation*}%
+    \vspace*{-2ex}%
+    \begin{lstlisting}
+\usepackage{mleftright} % Preamble
+f (x + 2) \cdot f \mleft( \frac{x}{2} + 2 \mright)
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Einheiten}
+    \begin{equation*}
+        f_\mathrm{laden\:swallow} = f_\mathrm{unladen\:swallow} \cdot \frac{m_\mathrm{coconut} + m_\mathrm{unladen\:swallow}}{m_\mathrm{unladen\:swallow}}
+    \end{equation*}
+    \pause
+    \begin{wrong}
+        \begin{lstlisting}
+43bps \cdot \frac{500g + 150g}{150g} \approx 186.3bps
+        \end{lstlisting}
+        \begin{equation*}
+            43 bps \cdot \frac{500 g + 150 g}{150 g} \approx 186.3 bps
+        \end{equation*}
+    \end{wrong}
+    \pause
+    \DeclareSIUnit{\beat}{b}
+    \begin{lstlisting}
+\usepackage{siunitx} % Preamble
+\DeclareSIUnit{\beat}{b} % Preamble
+\qty{43}{\beat\per\second} \cdot \frac{
+    \qty{500}{\gram} + \qty{150}{\gram}}{\qty{150}{\gram}}
+    \approx \qty{186.3}{\beat\per\second}
+    \approx \qty{0.2}{\kilo\hertz}
+        \end{lstlisting}
+    \begin{equation*}
+        \qty{43}{\beat\per\second} \cdot \frac{\qty{500}{\gram} + \qty{150}{\gram}}{\qty{150}{\gram}} \approx \qty{186.3}{\beat\per\second} \approx \qty{0.2}{\kilo\hertz}
+    \end{equation*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Einheiten \textsc{ii}}
+    \begin{wrong}
+        Bitte berechnen Sie $v$ $[\unit{\meter\per\second}]$.
+    \end{wrong}
+    \pause
+    Bitte berechnen Sie $v$ in \unit{\meter\per\second}.
+    \pause
+    \begin{equation*}
+        Q = \{Q\} \cdot [Q]
+    \end{equation*}
+    \pause
+    \begin{equation*}
+        [m] = \unit{\kilo\gram}
+    \end{equation*}
+    \pause
+    \begin{multicols}{2}
+        \input{images/tikzplotlib/units-wrong}
+
+        \wrongrule{}
+
+        \input{images/tikzplotlib/units}
+
+        \invisirule{}
+    \end{multicols}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Komma}
+    \begin{wrong}
+        \begin{lstlisting}
+\pi \approx 3,1415926
+        \end{lstlisting}
+        \begin{equation*}
+            \pi \approx 3,1415926
+        \end{equation*}
+    \end{wrong}
+    \pause
+    \begin{lstlisting}
+f(x, y, z) \approx 3.1415926
+    \end{lstlisting}
+    \begin{equation*}
+        f(x,y,z) \approx 3.1415926
+    \end{equation*}
+
+    \pause
+
+    \textbf{Lösung 1:}
+    \begin{lstlisting}
+\usepackage{icomma} % Preamble
+    \end{lstlisting}
+
+    \pause
+
+    \textbf{Lösung 2:}
+    \begin{lstlisting}
+\usepackage{siunitx} % Preamble
+\sisetup{output-decimal-marker={,}} % Preamble
+\pi \approx \num{3,1415926}
+    \end{lstlisting}
+    \begin{equation*}
+        \pi \approx \num[output-decimal-marker={,}]{3,1415926}
+    \end{equation*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Dimensionsprodukt}
+    \begin{wrong}
+        \begin{lstlisting}
+\qty{210}{\milli\meter} x \qty{297}{\milli\meter}.
+        \end{lstlisting}
+        Ein \textsc{din a4}-Blatt hat die Dimensionen \qty{210}{\milli\meter} x \qty{297}{\milli\meter}.
+    \end{wrong}\\[2ex]
+    \pause
+
+    \begin{lstlisting}
+$\qty{210}{\milli\meter} \times \qty{297}{\milli\meter}$.
+    \end{lstlisting}
+    Ein \textsc{din a4}-Blatt hat die Dimensionen $\qty{210}{\milli\meter} \times \qty{297}{\milli\meter}$.\\[2ex]
+    \pause
+
+    \begin{lstlisting}
+\qtyproduct{210x297}{\milli\meter}.
+    \end{lstlisting}
+    Ein \textsc{din a4}-Blatt hat die Dimensionen \qtyproduct{210x297}{\milli\meter}.
+
+    \begin{lstlisting}
+\qtyproduct[product-units=single]{210x297}{\milli\meter}.
+    \end{lstlisting}
+    Ein \textsc{din a4}-Blatt hat die Dimensionen \qtyproduct[product-units=single]{210x297}{\milli\meter}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Grad}
+    \begin{wrong}
+        \begin{lstlisting}
+36^\circ
+        \end{lstlisting}
+        \begin{equation*}
+            36^\circ
+        \end{equation*}
+    \end{wrong}
+    \\\pause
+    \begin{wrong}
+        ~\\Kopiert als \texttt{36$\mathtt{\circ}$}.
+    \end{wrong}\\[2ex]
+    \pause
+    \begin{lstlisting}
+36°
+    \end{lstlisting}
+    \begin{equation*}
+        36°
+    \end{equation*}\\[2ex]
+    \pause
+
+    \begin{lstlisting}
+\qty{36}{\degree} \neq \qty{36}{\celsius}
+    \end{lstlisting}
+    \begin{equation*}
+        \qty{36}{\degree} \neq \qty{36}{\celsius}
+    \end{equation*}\\[2ex]
+    \pause
+
+    \begin{lstlisting}
+\ang{36} + \ang{49.78127} + \ang{49;46;53} + \ang{;;42}
+    \end{lstlisting}
+    \begin{equation*}
+        \ang{36} + \ang{49.78127} + \ang{49;46;53} + \ang{;;42}
+    \end{equation*}
+\end{frame}
+
+\renewcommand{\F}{\mathfrak{F}}
+
+\begin{frame}[fragile]
+    \frametitle{d (Nur \textsc{iso} und \textsc{din})}
+    \begin{wrong}
+        \begin{lstlisting}
+\renewcommand{\F}{\mathfrak{F}} % Preamble
+\F[x(t)]=\int_{-\infty}^\infty x(t)\e^{-\i 2\pi f t}dt
+v(t) = \dot x = \frac{dx}{dt}
+        \end{lstlisting}
+        \begin{equation*}
+            \F[x(t)]=\int_{-\infty}^\infty x(t) \e^{-\i 2 \pi f t} d t
+            \qquad\qquad
+            v(t) = \dot x = \frac{dx}{dt}
+        \end{equation*}
+    \end{wrong}\\[2ex]
+    \pause
+
+    \begin{lstlisting}
+\usepackage[ISO,spaced]{diffcoeff} % Preamble
+[...] \dl3 t                 \diff{x}{t}
+        \end{lstlisting}
+    \begin{equation*}
+        \F[x(t)]=\int_{-\infty}^\infty x(t)\e^{-\i 2 \pi f t}\dl3 t
+        \qquad\qquad
+        v(t) = \dot x = \diff{x}{t}
+    \end{equation*}
+    \pause
+
+    \begin{lstlisting}
+\DeclareMathOperator{\dd}{d} % Preamble
+[...] \dd t                 \frac{\dd x}{\dd t}
+        \end{lstlisting}
+    \begin{equation*}
+        \F[x(t)]=\int_{-\infty}^\infty x(t)\e^{-\i 2\pi f t}\dd t
+        \qquad\qquad
+        v(t) = \dot x = \frac{\dd x}{\dd t}
+    \end{equation*}
+\end{frame}
+
+\newcommand{\transpose}{\mathsf{T}}
+\begin{frame}[fragile]
+    \frametitle{Transponieren}
+    \begin{wrong}
+        \begin{lstlisting}
+\mat P_{k|k-1}=\mat F_k\mat P_{k-1|k-1}\mat F_k^T+\mat Q_k
+        \end{lstlisting}
+        \begin{equation*}
+            \mat P_{k|k-1}=\mat F_k\mat P_{k-1|k-1}\mat F_k^T+\mat Q_k
+        \end{equation*}
+    \end{wrong}
+
+    \pause
+
+    \begin{kindawrong}
+        \begin{lstlisting}
+\newcommand{\transpose}{\intercal} % Preamble
+\mat P_{k|k-1}=\mat F_k\mat P_{k-1|k-1}\mat F_k^\transpose +\mat Q_k
+        \end{lstlisting}
+        \begin{equation*}
+            \mat P_{k|k-1}=\mat F_k\mat P_{k-1|k-1}\mat F_k^\intercal+\mat Q_k
+        \end{equation*}
+    \end{kindawrong}
+
+    \pause
+
+    \begin{lstlisting}
+\newcommand{\transpose}{\mathsf{T}} % Preamble
+\mat P_{k|k-1}=\mat F_k\mat P_{k-1|k-1}\mat F_k^\transpose +\mat Q_k
+    \end{lstlisting}
+    \begin{equation*}
+        \mat P_{k|k-1}=\mat F_k\mat P_{k-1|k-1}\mat F_k^\transpose+\mat Q_k
+    \end{equation*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Mehrzeilige Gleichungen}
+    \vspace*{-1ex}
+    \begin{lstlisting}
+\usepackage[tbtags]{amsmath} % Preamble
+\begin{align}
+    E & = m \, c^2 \\
+    x_1, x_2 & = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} \\
+    \begin{split}
+        f(x) & = a+b+c+d+e+f \\ & \quad +g+h+i+j+k+l
+    \end{split} \\ \begin{split}
+        g(x) & = a+b+c+d+e+f \\ & = 1+2+3+4+5+6
+    \end{split} \end{align}
+    \end{lstlisting}
+    \begin{align}
+        E        & = m \, c^2                           \\
+        x_1, x_2 & = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} \\
+        \begin{split}
+            f(x) & = a + b + c + d + e + f       \\
+                 & \quad + g + h + i + j + k + l
+        \end{split}            \\
+        \begin{split}
+            g(x) & = a + b + c + d + e + f \\
+                 & = 1 + 2 + 3 + 4 + 5 + 6
+        \end{split}
+    \end{align}
+\end{frame}
+
+% == == == == == == == == == == == == == == == == == == == == == == == == == == == ==
+\section{Generelle \LaTeX{}-Nitpicks}
+
+\sectiontitlepage
+
+\begin{frame}[fragile]
+    \frametitle{\$\$}
+    \begin{wrong}
+        \begin{lstlisting}[basicstyle=\ttfamily\footnotesize]
+Vorheriger Absatz
+$$\frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$
+Folgender Absatz
+        \end{lstlisting}
+        Vorheriger Absatz
+        $$\frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$
+        Folgender Absatz
+    \end{wrong}
+    \pause
+    \begin{lstlisting}[basicstyle=\ttfamily\footnotesize]
+Vorheriger Absatz
+\begin{equation*} % \[
+    \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+\end{equation*} % \]
+Folgender Absatz
+    \end{lstlisting}
+    Vorheriger Absatz
+    \begin{equation*}
+        \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+    \end{equation*}
+    Folgender Absatz
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Variablen im Fließtext}
+    \begin{wrong}
+        \begin{lstlisting}
+\begin{equation*}
+    x = v_0 t - \frac{1}{2} a t^2 \, ,
+\end{equation*}
+mit Zeit t, Beschleunigung a und Startgeschwindigkeit v0.
+        \end{lstlisting}
+        \begin{equation*}
+            x = v_0 t - \frac12 a t^2 \, ,
+        \end{equation*}
+        mit Zeit t, Beschleunigung a und Startgeschwindigkeit v$0$.
+    \end{wrong}
+    \pause
+    \begin{lstlisting}
+mit Zeit $t$, Beschleunigung $a$ und Startgeschwindigkeit    $v_0$.
+    \end{lstlisting}
+    mit Zeit $t$, Beschleunigung $a$ und Startgeschwindigkeit $v_0$.
+    \pause
+    \begin{lstlisting}
+Wir benötigen $v_0$, $a$, $t$ und einen Taschenrechner.
+Die Bewegung findet in $x$-Richtung statt. [...]
+    \end{lstlisting}
+    Wir benötigen $v_0$, $a$, $t$ und einen Taschenrechner.
+    Die Bewegung findet in $x$-Richtung statt;
+    entlang der $x$-Achse.
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Satzzeichen nach Gleichungen}
+    \vspace*{-4ex}%
+    \begin{align*}
+        x   & = v_0 t - \frac{1}{2} a t^2 \, ,
+        \intertext{
+            mit Zeit $t$, Beschleunigung $a$ und Startgeschwindigkeit $v_0$.
+            Da das Objekt zu Beginn ruht, wissen wir, dass
+        }
+        v_0 & = \qty{0}{\meter\per\second}\,,
+        \intertext{
+            weshalb wir die Gleichung vereinfachen können zu
+        }
+        x   & = \frac{1}{2} a t^2 \, .
+    \end{align*}
+    \pause
+    Wir wissen nun, dass
+    \begin{itemize}
+        \item $x$ zeitabhängig ist,
+        \item $x$ immer größer wird und
+        \item der Pöbel mit dem 9-Euro-Ticket nach Sylt kommt.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Leerzeichen nach Punkten}
+    \vspace*{-3ex}%
+    \begin{multicols}{2}
+        \justifying\nonfrenchspacing
+        Wird Dr. Jones zu alt für lange Urwaldabenteuer mit Hut und Peitsche?
+        Er ist jetzt Neunundsiebzig.
+
+        \begin{lstlisting}
+Dr. Jones
+        \end{lstlisting}
+        \wrongrule
+
+        \pause
+        Wird Dr.\@ Jones zu alt für lange Urwaldabenteuer mit Hut und Peitsche?
+        Er ist jetzt Neunundsiebzig.
+
+        \begin{lstlisting}
+Dr.\@ Jones
+        \end{lstlisting}
+        \invisirule\frenchspacing
+    \end{multicols}
+    \pause
+    (Passiert nur mit \lstinline{\nonfrenchspacing} aktiviert)
+
+    \pause
+    \justifying\nonfrenchspacing
+
+    \begin{lstlisting}
+H. G. Wells
+    \end{lstlisting}
+    H. G. Wells schreibt gerne neue Bücher.
+    Dabei vergisst er manchmal die Zeit.
+
+    \pause
+
+    \begin{lstlisting}
+[...] Option B\@. Das [...]
+    \end{lstlisting}
+    Ich entschied mich schlussendlich für Option B\@.
+    Das habe ich mir nun schon länger überlegt.
+
+    \frenchspacing
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Umlaute und Unicode -- Wie schreibe ich ,,Süßigkeit``?}
+
+    \begin{wrong}
+        \textbf{Lösung 1}
+        \begin{lstlisting}
+S\"u"sigkeit
+        \end{lstlisting}
+    \end{wrong}\\[2ex]
+    \pause
+    \begin{kindawrong}
+        \textbf{Lösung 2} (pdf\LaTeX)
+        \begin{lstlisting}
+\usepackage[utf8]{inputenc} % Preamble
+Süßigkeit
+        \end{lstlisting}
+    \end{kindawrong}\\[2ex]
+    \pause
+    \textbf{Lösung 3}
+
+    Verwende \XeLaTeX{} oder \LuaLaTeX{}.
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Anführungszeichen}
+    \begin{wrong}
+        \begin{lstlisting}
+"In the beginning there was nothing, which exploded."
+        \end{lstlisting}
+        \textquotedbl{}In the beginning there was nothing, which exploded.\textquotedbl{}
+    \end{wrong}\\[2ex]
+    \pause
+
+    \begin{lstlisting}[literate={<<<}{{\rmfamily\textquotedblleft{}}}{1} {>>>}{{\rmfamily\textquotedblright{}}}{1}]
+<<<In the beginning there was nothing, which exploded.>>>
+``In the beginning there was nothing, which exploded.''
+    \end{lstlisting}
+    ``In the beginning there was nothing, which exploded.''\\[2ex]
+    \pause
+
+    \begin{lstlisting}
+,,Am Anfang war nichts, was explodierte.``
+\glqq{}Am Anfang war nichts, was explodierte.\grqq{}
+    \end{lstlisting}
+    ,,Am Anfang war nichts, was explodierte.``\\[2ex]
+
+    \pause
+
+    \begin{lstlisting}
+\usepackage[german]{babel} % Preamble
+\usepackage{csquotes} % Preamble
+"Am Anfang war nichts, was explodierte."
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Auslassungspunkte}
+    Eckige Klammern [\dots{}] nur bei \textsc{duden}, \textsc{mla}.
+
+    \pause
+
+    \begin{lstlisting}[escapechar=\@]
+Vielleicht...vielleicht auch nicht. % @\color{comment}\textsc{uosg}@
+Vielleicht … vielleicht auch nicht. % @\color{comment}\textsc{duden}, \textsc{osg}@
+Vielleicht \dots{} vielleicht auch nicht.
+Vielleicht ... vielleicht auch nicht. % @\color{comment}\textsc{ap}, \textsc{duden}, \textsc{osg}@
+Vielleicht .@\color{comment}\textvisiblespace{}@.@\color{comment}\textvisiblespace{}@. vielleicht auch nicht. % @\color{comment}\textsc{cms}, \textsc{apa}@
+        \end{lstlisting}
+
+    Vielleicht...vielleicht auch nicht.
+
+    Vielleicht … vielleicht auch nicht.
+
+    Vielleicht \dots{} vielleicht auch nicht.
+
+    Vielleicht ... vielleicht auch nicht.
+
+    Vielleicht . . . vielleicht auch nicht.\\[2ex]
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Binde- und Gedankenstriche}%
+    \begin{wrong}
+        \begin{lstlisting}
+Das Ost-West-Gefälle bleibt - trotz politischer Maßnahmen - weiterhin relevant.
+        \end{lstlisting}
+        Das Ost-West-Gefälle bleibt - trotz politischer Maßnahmen - weiterhin relevant.
+    \end{wrong}\\[2ex]\pause
+
+    \begin{lstlisting}
+Das Ost-West-Gefälle bleibt -- trotz politischer Maßnahmen -- weiterhin relevant.
+    \end{lstlisting}
+    Das Ost-West-Gefälle bleibt -- trotz politischer Maßnahmen -- weiterhin relevant.\\[2ex]\pause
+
+    \begin{lstlisting}
+The east-west divide remains relevant---despite [...].
+    \end{lstlisting}
+    The east-west divide remains relevant---despite policy measures.\\[2ex]
+    \pause
+
+    \begin{lstlisting}
+4--8 Jahre; 1618--1648; 23. Mai 1618 -- 24. Oktober 1648
+    \end{lstlisting}
+    4--8 Jahre; 1618--1648; 23. Mai 1618 -- 24. Oktober 1648
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Sprache setzen}%
+    \begin{justify}
+        Alle Menschen sind frei und gleich an Würde und Rechten geboren.
+        Sie sind mit Vernunft und Gewissen begabt und sollen einander im Geist der Brüderlichkeit begegnen.
+    \end{justify}
+
+    \begin{lstlisting}
+\usepackage[english]{babel}
+\usepackage[ngerman]{babel}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Hervorhebung}%
+    \begin{multicols}{2}
+        \small\justifying
+        \lstinline[basicstyle=\ttfamily\small]{\textbf}\texttt{\{{\color{comment}\textbullet}\}}
+
+        Alle Menschen sind frei und gleich an Würde und Rechten geboren.
+        Sie sind mit \textbf{Vernunft} und Gewissen begabt und sollen einander im Geist der Brüderlichkeit begegnen.
+
+        \wrongrule
+
+        \lstinline[basicstyle=\ttfamily\small]{\textit}\texttt{\{{\color{comment}\textbullet}\}}
+
+        Alle Menschen sind frei und gleich an Würde und Rechten geboren.
+        Sie sind mit \textit{Vernunft} und Gewissen begabt und sollen einander im Geist der Brüderlichkeit begegnen.
+
+        \kwrule
+    \end{multicols}
+
+    \pause
+
+    Für Trennung von Inhalt und Darstellung verwendet \lstinline[basicstyle=\ttfamily]{\emph}\texttt{\{{\color{comment}\textbullet}\}}.
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Tabellen}%
+    \begin{multicols}{2}
+        \renewcommand{\arraystretch}{1.0}
+        \scriptsize\begin{tabularx}{\linewidth}{|C||c|c|c|}
+            \hline
+            \multirow{2}{*}{\textbf{Name}} & \multicolumn{3}{@{}c@{}|}{\textbf{Charakteristika}} \\\cline{2-4}
+                                           & \textbf{Groß} & \textbf{Pelz} & \textbf{Süß}        \\ \hline \hline
+            Aprikose                       & Nein          & Ja            & Ja                  \\ \hline
+            Nektarine                      & Ja            & Nein          & Ja                  \\ \hline
+            Pfirsich                       & Ja            & Ja            & Ja                  \\ \hline \hline
+            ???                            & Nein          & Nein          & ???                 \\ \hline
+            Gorilla                        & Ja            & Ja            & Ja                  \\ \hline
+        \end{tabularx}
+
+        \vspace*{1ex}
+
+        \wrongrule
+        \pause
+
+        \centering\renewcommand{\arraystretch}{1.2}
+        \scriptsize\begin{tabular}{@{}lccc@{}}                                   \toprule
+            Name      & \multicolumn{3}{@{}c@{}}{Charakteristika} \\ \cmidrule{2-4}
+                      & Groß & Pelz & Süß                         \\ \midrule
+            Aprikose  & Nein & Ja   & Ja                          \\
+            Nektarine & Ja   & Nein & Ja                          \\
+            Pfirsich  & Ja   & Ja   & Ja                          \\ \midrule
+            ???       & Nein & Nein & ???                         \\
+            Gorilla   & Ja   & Ja   & Ja                          \\ \bottomrule
+        \end{tabular}
+    \end{multicols}
+    \pause
+    \begin{lstlisting}[basicstyle=\scriptsize\ttfamily]
+\usepackage{booktabs,multicol} % Preamble
+\renewcommand{\arraystretch}{1.2} % Preamble
+\begin{tabular}{@{}lccc@{}}                                  \toprule
+    Name      & \multicolumn{3}{@{}c@{}}{Charakteristika} \\ \cmidrule{2-3}
+              & Groß & Haarig & Süß                       \\ \midrule
+    Aprikose  & Nein & Nein   & Ja                        \\
+    Nektarine & Ja   & Ja     & Ja                        \\
+    Pfirsich  & Ja   & Nein   & Ja                        \\ \midrule
+    ???       & Nein & Ja     & ???                       \\
+    Gorilla   & Ja   & Ja     & Ja                        \\ \bottomrule
+\end{tabular}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Abbildungs- und Tabellenpositionierung}
+    \begin{wrong}
+        \begin{itemize}
+            \item Vor dem Text, sodass man zurückblättern muss,
+            \item In der Mitte der Seite,
+            \item Im Textfluss.
+        \end{itemize}
+    \end{wrong}
+    \begin{itemize}
+        \item Oben oder unten auf der Seite.
+    \end{itemize}
+    \begin{figure}
+        \begin{subfigure}{.3333\textwidth}
+            \centering
+            \includegraphics[page=1,width=\linewidth]{images/float/float.pdf}
+            \raisebox{5ex}{\invisirule{}}
+        \end{subfigure}%
+        \begin{subfigure}{.3333\textwidth}
+            \centering
+            \includegraphics[page=2,width=\linewidth]{images/float/float.pdf}
+            \raisebox{5ex}{\wrongrule{}}
+        \end{subfigure}%
+        \begin{subfigure}{.3333\textwidth}
+            \centering
+            \includegraphics[page=3,width=\linewidth]{images/float/float.pdf}
+            \raisebox{5ex}{\invisirule{}}
+        \end{subfigure}%
+    \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Hurenkinder und Schusterjungen}
+    \begin{figure}
+        \centering%
+        \begin{subfigure}{.35\textwidth}
+            \includegraphics[page=1,width=\linewidth]{images/hurenkind/hurenkind.pdf}
+        \end{subfigure}%
+        \begin{subfigure}{.35\textwidth}
+            \includegraphics[page=2,width=\linewidth]{images/hurenkind/hurenkind.pdf}
+        \end{subfigure}%
+    \end{figure}
+    \pause
+
+    \begin{lstlisting}
+\widowpenalty10000 % Preamble
+\clubpenalty10000 % Preamble
+    \end{lstlisting}
+
+    \begin{lstlisting}
+\usepackage[all]{nowidow} % Preamble
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Smallcaps, Oldstyle}%
+    \vspace*{-2.5ex}
+    \begin{multicols}{2}
+        \small\justifying
+        Die NASA (National Aeronautics and Space Administration) ist die $1958$ gegründete zivile US-Bundesbehörde für Raumfahrt und Flugwissenschaft.
+        Der Hauptsitz befindet sich in Washington, DC.
+        Zugleich ist die NASA eine wichtige geowissenschaftliche Forschungsinstitution und stellt in den USA die meisten Forschungsgelder für klimawissenschaftliche Forschungsarbeiten bereit.
+
+        ~~~~~Im Februar $2006$ strich die NASA den Schutz der Erde aus ihrem mission statement, um es dem von George W. Bush verkündeten Raumflugprogramm anzugleichen.
+
+        Die \textsc{nasa} (National Aeronautics and Space Administration) ist die 1958 gegründete zivile \textsc{us}-Bundesbehörde für Raumfahrt und Flugwissenschaft.
+        Der Hauptsitz befindet sich in Washington, \textsc{dc}.
+        Zugleich ist die \textsc{nasa} eine wichtige geowissenschaftliche Forschungsinstitution und stellt in den \textsc{usa} die meisten Forschungsgelder für klimawissenschaftliche Forschungsarbeiten bereit.
+
+        ~~~~~Im Februar 2006 strich die \textsc{nasa} den Schutz der Erde aus ihrem mission statement, um es dem von George W. Bush verkündeten Raumflugprogramm anzugleichen.
+    \end{multicols}
+    \pause
+    Kein wissenschaftliches Style Manual will das aber tatsächlich!
+\end{frame}
+
+% == == == == == == == == == == == == == == == == == == == == == == == == == == == ==
+\section{Paketempfehlungen}
+
+\sectiontitlepage
+
+\begin{frame}[fragile]
+    \frametitle{tikzplotlib -- Python Matplotlib als TikZ export}%
+    \vspace*{-1ex}
+    \begin{figure}
+        \begin{subfigure}{0.5\textwidth}
+            \centering
+            \raisebox{6ex}{\includegraphics[width=.4\linewidth]{images/python}}
+        \end{subfigure}%
+        \begin{subfigure}{0.5\textwidth}
+            \centering
+            \includegraphics[width=.8\linewidth]{images/tikzplotlib/tpl-example-crop}
+            \caption{Matplotlib}
+        \end{subfigure}%
+
+        \begin{subfigure}{0.5\textwidth}
+            \input{images/tikzplotlib/tpl-example}
+            \caption{tikzplotlib}
+        \end{subfigure}%
+        \begin{subfigure}{0.5\textwidth}
+            \raisebox{0.65ex}{\input{images/tikzplotlib/tpl-example-edit}}
+            \caption{tikzplotlib nachbearbeitet}
+        \end{subfigure}%
+    \end{figure}
+\end{frame}
+
+\renewmenumacro{\directory}[/]{pathswithblackfolder}
+
+\begin{frame}[fragile]
+    \frametitle{menukeys}
+    \begin{lstlisting}
+\usepackage{menukeys} % Preamble
+
+Öffne eine Datei indem du auf \menu{File > Open File} gehst.
+Speichern kannst du mit \keys{\ctrl + S}.
+Die Pfeiltasten sind \keys{\arrowkeyup},[...].
+Am besten speicherst du sie in
+deinen \directory{/home/yourname} Ordner.
+    \end{lstlisting}
+
+    Öffne eine Datei indem du auf \menu{File > Open File} gehst.
+    Speichern kannst du mit \keys{\ctrl + S}.
+    Die Pfeiltasten sind \keys{\arrowkeyup},\keys{\arrowkeydown},\keys{\arrowkeyleft},\keys{\arrowkeyright}.
+    Am Besten speicherst du sie in deinen \directory{/home/yourname} Ordner.
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{bytefield}%
+    \vspace*{-1ex}%
+    \begin{lstlisting}
+\usepackage{bytefield} % Preamble
+\begin{bytefield}{16}
+    \bitheader{0,7,8,15} \\
+    \begin{rightwordgroup}{Header}
+        \bitbox{4}{Tag} & \bitbox{12}{Mask} \\
+            \begin{leftwordgroup}{Node IDs}
+            \bitbox{8}{Source} & \bitbox{8}{Destination}
+        \end{leftwordgroup}
+    \end{rightwordgroup} \\
+    \wordbox{2}{Data}
+\end{bytefield}
+    \end{lstlisting}
+
+    \begin{center}
+        \begin{bytefield}{16}
+            \bitheader{0,7,8,15} \\
+            \begin{rightwordgroup}{Header}
+                \bitbox{4}{Tag} & \bitbox{12}{Mask} \\
+                \begin{leftwordgroup}{Node IDs}
+                    \bitbox{8}{Source} & \bitbox{8}{Destination}
+                \end{leftwordgroup}
+            \end{rightwordgroup} \\
+            \wordbox{2}{Data}
+        \end{bytefield}
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{cleverref}
+    \begin{lstlisting}
+\usepackage{cleveref} % Preamble
+As can be seen in \cref{sec:examplea, sec:exampleb, sec:examplec, sec:examplef} and illustrated by \cref{fig:my-pic}, there is a lot to do.
+\Cref{eq:mitternatchtsformel} demonstrates this too.
+    \end{lstlisting}
+
+    As can be seen in sections 1.1 to 1.3 and 1.6 and illustrated by figure 15, there is a lot to do.
+    Equation (12) demonstrates this too.
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{todonotes}
+    \begin{lstlisting}[basicstyle=\ttfamily\footnotesize]
+\usepackage{todonotes} % Preamble
+Every empire\todo{source} grows until its reach exceeds its grasp.
+\begin{figure}\centering
+    \missingfigure{Add a picture of an empire here.}
+    \caption{An empire growing.}\label{fig:empire-grow}
+\end{figure}
+    \end{lstlisting}
+
+    \begin{figure}
+        \centering\small
+        \includegraphics[width=\linewidth]{images/missfig.png}
+        \caption{An empire.}
+        \label{fig:empire-grow}
+    \end{figure}
+
+    \includegraphics[width=\linewidth]{images/todo}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{siunitx -- Tabellen}
+    \begin{lstlisting}[basicstyle=\ttfamily\footnotesize]
+\usepackage{siunitx} % Preamble
+\begin{tabular}{@{}l S[table-format=4.3] S[table-format=1e+1]@{}}
+    \toprule
+    Name        & {Zahl} & {Exponent} \\ \midrule
+    Tausend     & 1000   & 1e3        \\
+    Zehn        & 10     & 1e1        \\
+    Hunderstel  & 0.01   & 1e-2       \\
+    Tausendstel & 0.001  & 1e-3       \\ \bottomrule
+\end{tabular}
+    \end{lstlisting}
+    \vspace*{-1ex}
+    \begin{center}
+        \begin{tabular}{@{}l S[table-format=4.3] S[table-format=1e+1]@{}}
+            \toprule
+            Name        & {Zahl} & {Exponent} \\ \midrule
+            Tausend     & 1000   & 1e3        \\
+            Zehn        & 10     & 1e1        \\
+            Hunderstel  & 0.01   & 1e-2       \\
+            Tausendstel & 0.001  & 1e-3       \\ \bottomrule
+        \end{tabular}
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{newcomputermodern}
+    \begin{multicols}{2}
+        \small\justifying{\fontspec{Latin Modern Roman 10 Regular}
+            Als Gregor Samsa eines Morgens aus unruhigen Träumen erwachte, fand er sich in seinem Bett zu einem ungeheueren Ungeziefer verwandelt.
+            Er lag auf seinem panzerartig harten Rücken und sah, wenn er den Kopf ein wenig hob, seinen gewölbten, braunen, von bogenförmigen Versteifungen geteilten Bauch, auf dessen Höhe sich die Bettdecke, zum gänzlichen Niedergleiten bereit, kaum noch erhalten konnte.
+        }
+
+        Als Gregor Samsa eines Morgens aus unruhigen Träumen erwachte, fand er sich in seinem Bett zu einem ungeheueren Ungeziefer verwandelt.
+        Er lag auf seinem panzerartig harten Rücken und sah, wenn er den Kopf ein wenig hob, seinen gewölbten, braunen, von bogenförmigen Versteifungen geteilten Bauch, auf dessen Höhe sich die Bettdecke, zum gänzlichen Niedergleiten bereit, kaum noch erhalten konnte.
+    \end{multicols}
+    \begin{itemize}
+        \item Book Weight
+        \item Unicode (ελληνική Русский אבגדהושׁשּׂלּצּ \smash{x̧̗̖̀́̃̂} ☭ Ⳃ ʛ)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{latexindent}
+    \begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
+\begin{tabular}{@{}lccc@{}}                                  \toprule
+    Name      & \multicolumn{3}{@{}c@{}}{Charakteristika} \\ \cmidrule{2-3}
+              & Groß & Haarig & Süß                       \\ \midrule
+    Aprikose  & Nein & Nein   & Ja                        \\
+    Nektarine & Ja   & Ja     & Ja                        \\
+    Pfirsich  & Ja   & Nein   & Ja                        \\ \midrule
+    ???       & Nein & Ja     & ???                       \\
+    Gorilla   & Ja   & Ja     & Ja                        \\ \bottomrule
+\end{tabular}
+    \end{lstlisting}
+    \begin{itemize}
+        \item Automatisches Einrücken von Environments;
+        \item Automatisches Einrücken nach Items;
+        \item Alignment in Tabellen.
+        \item Setup ist \textsc{pita}.
+    \end{itemize}
+\end{frame}
+
+% == == == == == == == == == == == == == == == == == == == == == == == == == == == ==
+\appendix
+\miniframesoff
+\begin{frame}[fragile]
+    \frametitle{Dankeschön}
+    Immer nach spezifischen Anforderungen und Styleguides fragen!\\[4ex]
+
+    \begin{itemize}
+        \item Fragen?
+        \item Ergänzungen?
+    \end{itemize}
+
+\end{frame}
+
+% This gave images rounded corners but was later dropped.
+\newcommand{\roundpanda}[2][0ex]{%
+    \begin{tikzpicture}
+        \begin{scope}
+            \clip [rounded corners=#1] (0,0) rectangle coordinate (centerpoint) (.24\linewidth,.24\linewidth);
+            \node [inner sep=0pt] at (centerpoint) {\includegraphics[width=.24\linewidth]{images/pandas/#2}};
+        \end{scope}
+    \end{tikzpicture}%
+}
+
+% No copyright violation intended
+\begin{frame}[fragile]
+    \frametitle{Rote Pandas? Rote Pandas!}
+
+    \roundpanda{a}
+    \hfill
+    \roundpanda{b}
+    \hfill
+    \roundpanda{c}
+    \hfill
+    \roundpanda{kim}
+    \\[.0133333\linewidth-.1ex]
+    \roundpanda{e}
+    \hfill
+    \roundpanda{f}
+    % \hfill
+    % \roundpanda{g}
+    \hfill
+    \roundpanda{h}
+    \hfill
+    \raisebox{.12\linewidth-0.55ex}{\qrcode[height=.24\linewidth]{https://t.me/DiplomacyUpdateBot}}
+
+    \url{https://t.me/DiplomacyUpdateBot} \hfill \texttt{@DiplomacyUpdateBot}
+\end{frame}
+
+\end{document}
+
