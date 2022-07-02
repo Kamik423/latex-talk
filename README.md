@@ -9,6 +9,8 @@ The source code is as pretty as I could make it in the time constraints
 * Write one sentence per line
 * mod vs bmod
 * word variable names upright roman
+* microtype
+* Siunitx ranges and lists
 
 ## License
 

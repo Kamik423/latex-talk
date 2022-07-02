@@ -1,7 +1,7 @@
 % !TEX program = xelatex
 
 \PassOptionsToPackage{fleqn,tbtags}{amsmath}
-\documentclass[handout]{beamer}
+\documentclass{beamer}
 
 % Font settings
 \usepackage{fontspec}
@@ -149,7 +149,7 @@
             newcommand,renewcommand,ifxetex,symbfup,usepackage,mathbfit,mathfrak,F,
             DeclareSIUnit,beat,per,second,gram,qty,kilo,hertz,num,sisetup,milli,meter,qtyproduct,degree,celsius,ang,
             toprule,midrule,cmidrule,bottomrule,transpose,intercal,nonfrenchspacing,
-            wordbox,bitbox,bitheader,menu,keys,directory,ctrl,arrowkeyup,cref,missingfigure,todo,
+            wordbox,bitbox,bitheader,menu,keys,directory,ctrl,arrowkeyup,cref,Cref,missingfigure,todo,
         },
 }
 \lstset{style=customstyle}
@@ -1306,7 +1306,7 @@ Every empire\todo{source} grows until its reach exceeds its grasp.
     \begin{figure}
         \centering\small
         \includegraphics[width=\linewidth]{images/missfig.png}
-        \caption{An empire.}
+        \caption{An empire growing.}
         \label{fig:empire-grow}
     \end{figure}
 
