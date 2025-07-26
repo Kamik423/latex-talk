@@ -1,7 +1,7 @@
 % !TEX program = xelatex
 
 \PassOptionsToPackage{fleqn,tbtags}{amsmath}
-\documentclass{beamer}
+\documentclass[aspectratio=169, 10pt]{beamer}
 
 % Font settings
 \usepackage{fontspec}
@@ -217,10 +217,10 @@
 \begin{frame}[fragile]
     \frametitle{Wer bin ich?}
     \begin{columns}
-        \begin{column}{0.5\textwidth}
+        \begin{column}{0.33\textwidth}
             \includegraphics[width=\textwidth]{images/me.png}
         \end{column}
-        \begin{column}{0.5\textwidth}
+        \begin{column}{0.67\textwidth}
             \textit{Hallo, ich bin Hans.}
 
             ~
@@ -262,11 +262,11 @@
 \begin{frame}[fragile]
     \frametitle{Styleguides}
     \begin{tabularx}{\textwidth}{@{}C@{}C@{}C@{}C@{}C@{}}
-        \includegraphics[height=0.25\textwidth]{images/styleguides/apa}  &
-        \includegraphics[height=0.25\textwidth]{images/styleguides/cmos} &
-        \includegraphics[height=0.25\textwidth]{images/styleguides/ieee} &
-        \includegraphics[height=0.25\textwidth]{images/styleguides/din}  &
-        \includegraphics[height=0.25\textwidth]{images/styleguides/iso}    \\[-2ex]
+        \includegraphics[width=0.125\textwidth]{images/styleguides/apa}  &
+        \includegraphics[width=0.125\textwidth]{images/styleguides/cmos} &
+        \includegraphics[width=0.125\textwidth]{images/styleguides/ieee} &
+        \includegraphics[width=0.125\textwidth]{images/styleguides/din}  &
+        \includegraphics[width=0.125\textwidth]{images/styleguides/iso}    \\[-2ex]
         \tiny\url{apastyle.apa.org}                                      &
         \tiny\url{press.uchicago.edu}                                    &
         \tiny\url{ieee.org}                                              &
@@ -274,8 +274,8 @@
         \tiny\url{en-standard.eu}
     \end{tabularx}
 
-    \includegraphics[height=0.32\textwidth]{images/iso-extract}\hfill
-    \includegraphics[height=0.32\textwidth]{images/din-extract}
+    \includegraphics[width=0.5\textwidth]{images/iso-extract}\hfill
+    \includegraphics[width=0.4\textwidth]{images/din-extract}
     \note[item]{DIN 1338}
     \note[item]{ISO 80000-2}
 \end{frame}
@@ -1094,6 +1094,7 @@ The east-west divide remains relevant---despite [...].
 \begin{frame}[fragile]
     \frametitle{Sprache setzen}%
     \begin{justify}
+        \Large
         Alle Menschen sind frei und gleich an Würde und Rechten ge\-boren.~Sie sind mit Vernunft und Gewissen begabt und sollen~ei\-nan\-der~im Geist der Brüderlichkeit begegnen.
     \end{justify}
 
@@ -1101,6 +1102,7 @@ The east-west divide remains relevant---despite [...].
 \usepackage[english]{babel}
 \usepackage[ngerman]{babel}
     \end{lstlisting}
+    \note[item]{Konfiguriert auch icomma, siunitx}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -1131,7 +1133,7 @@ The east-west divide remains relevant---despite [...].
     \frametitle{Tabellen}%
     \begin{multicols}{2}
         \renewcommand{\arraystretch}{1.0}
-        \scriptsize\begin{tabularx}{\linewidth}{|C||c|c|c|}
+        \small\begin{tabularx}{\linewidth}{|C||c|c|c|}
             \hline
             \multirow{2}{*}{\textbf{Name}} & \multicolumn{3}{@{}c@{}|}{\textbf{Charakteristika}} \\\cline{2-4}
                                            & \textbf{Groß} & \textbf{Pelz} & \textbf{Süß}        \\ \hline \hline
@@ -1143,12 +1145,13 @@ The east-west divide remains relevant---despite [...].
         \end{tabularx}
 
         \vspace*{1ex}
+        \note[item]{Nicht tabularx / fill}
 
         \wrongrule
         \pause
 
         \centering\renewcommand{\arraystretch}{1.2}
-        \scriptsize\begin{tabular}{@{}lccc@{}}                                   \toprule
+        \small\begin{tabular}{@{}lccc@{}}                                   \toprule
             Name      & \multicolumn{3}{@{}c@{}}{Charakteristika} \\ \cmidrule{2-4}
                       & Groß & Pelz & Süß                         \\ \midrule
             Aprikose  & Nein & Ja   & Ja                          \\
@@ -1158,8 +1161,8 @@ The east-west divide remains relevant---despite [...].
             Gorilla   & Ja   & Ja   & Ja                          \\ \bottomrule
         \end{tabular}
     \end{multicols}
-    \pause
-    \begin{lstlisting}[basicstyle=\scriptsize\ttfamily]
+    \pause\vspace*{-6ex}
+    \begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
 \usepackage{booktabs,multicol} % Preamble
 \renewcommand{\arraystretch}{1.2} % Preamble
 \begin{tabular}{@{}lccc@{}}                                  \toprule
@@ -1172,6 +1175,8 @@ The east-west divide remains relevant---despite [...].
     Gorilla   & Ja   & Ja     & Ja                        \\ \bottomrule
 \end{tabular}
     \end{lstlisting}
+    \note[item]{@\{\}}
+    \note[item]{arraystretch}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -1189,21 +1194,22 @@ The east-west divide remains relevant---despite [...].
     \begin{itemize}
         \item Oben oder unten auf der Seite.
     \end{itemize}
+    \vspace*{-5ex}
     \begin{figure}
         \begin{subfigure}{.3333\textwidth}
             \centering
-            \includegraphics[page=1,width=\linewidth]{images/float/float.pdf}
-            \raisebox{5ex}{\invisirule{}}
+            \includegraphics[page=1,width=0.85\linewidth]{images/float/float.pdf}
+            \raisebox{10ex}{\invisirule{}}
         \end{subfigure}%
         \begin{subfigure}{.3333\textwidth}
             \centering
-            \includegraphics[page=2,width=\linewidth]{images/float/float.pdf}
-            \raisebox{5ex}{\wrongrule{}}
+            \includegraphics[page=2,width=0.85\linewidth]{images/float/float.pdf}
+            \raisebox{10ex}{\wrongrule{}}
         \end{subfigure}%
         \begin{subfigure}{.3333\textwidth}
             \centering
-            \includegraphics[page=3,width=\linewidth]{images/float/float.pdf}
-            \raisebox{5ex}{\invisirule{}}
+            \includegraphics[page=3,width=0.85\linewidth]{images/float/float.pdf}
+            \raisebox{10ex}{\invisirule{}}
         \end{subfigure}%
     \end{figure}
 \end{frame}
@@ -1213,10 +1219,10 @@ The east-west divide remains relevant---despite [...].
     \begin{figure}
         \centering%
         \begin{subfigure}{.35\textwidth}
-            \includegraphics[page=1,width=\linewidth]{images/hurenkind/hurenkind.pdf}
+            \includegraphics[page=1,width=0.8\linewidth]{images/hurenkind/hurenkind.pdf}
         \end{subfigure}%
         \begin{subfigure}{.35\textwidth}
-            \includegraphics[page=2,width=\linewidth]{images/hurenkind/hurenkind.pdf}
+            \includegraphics[page=2,width=0.8\linewidth]{images/hurenkind/hurenkind.pdf}
         \end{subfigure}%
     \end{figure}
     \pause
@@ -1267,13 +1273,15 @@ The east-west divide remains relevant---despite [...].
     \begin{figure}
         \begin{subfigure}{0.5\textwidth}
             \centering
-            \raisebox{6ex}{\includegraphics[width=.4\linewidth]{images/python}}
+            \raisebox{6ex}{\includegraphics[width=.35\linewidth]{images/python}}
         \end{subfigure}%
         \begin{subfigure}{0.5\textwidth}
             \centering
-            \includegraphics[width=.8\linewidth]{images/tikzplotlib/tpl-example-crop}
+            \includegraphics[width=.7\linewidth]{images/tikzplotlib/tpl-example-crop}
             \caption{Matplotlib}
         \end{subfigure}%
+
+        \vspace*{-4ex}%
 
         \begin{subfigure}{0.5\textwidth}
             \input{images/tikzplotlib/tpl-example}
@@ -1362,7 +1370,7 @@ Every empire\todo{source} grows until its reach exceeds its grasp.
 
     \begin{figure}
         \centering\small
-        \includegraphics[width=\linewidth]{images/missfig.png}
+        \includegraphics[width=0.75\linewidth]{images/missfig.png}
         \caption{An empire growing.}
         \label{fig:empire-grow}
     \end{figure}
@@ -1439,8 +1447,8 @@ Every empire\todo{source} grows until its reach exceeds its grasp.
 \miniframesoff
 \begin{frame}[fragile]
     \frametitle{Dankeschön}
-    \note{Fragen / Ergänzungen?}
-    \note{Sticker}
+    \note[item]{Fragen / Ergänzungen?}
+    \note[item]{Sticker}
     Immer nach spezifischen Anforderungen und Styleguides fragen!\\\vfill
 
     \pause
