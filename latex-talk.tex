@@ -7,8 +7,9 @@
 \usepackage{fontspec}
 \usepackage{graphicx}
 \usepackage{microtype}
+% \defaultfontfeatures{Numbers=OldStyle}
 \usepackage{newcomputermodern}
-\setmainfont[Numbers=OldStyle]{NewComputerModern10-Book}
+\setmainfont[Numbers=OldStyle]{NewCM10-Book}
 % \setmonofont[SmallCapsFeatures={Numbers=OldStyle}]{Latin Modern Mono Light}
 
 % Language
@@ -40,9 +41,13 @@
 % Define some colors that will be reused
 \definecolor{comment}{HTML}{d8dadc}
 \definecolor{string}{HTML}{657153}
-\definecolor{unired}{HTML}{9e2b25}
-\definecolor{uniblue}{HTML}{063d79}
-\definecolor{uniorange}{HTML}{FFBA08}
+\definecolor{highlighttheme}{HTML}{c6257d}
+\definecolor{backgroundtheme}{HTML}{26114B}
+\definecolor{backgroundthemecontrast}{HTML}{f2f0f5}
+% \definecolor{backgroundtheme}{HTML}{8f7a9d}
+% \definecolor{backgroundtheme}{HTML}{ed708d}
+\definecolor{markuporange}{HTML}{FFBA08}
+\definecolor{markupred}{HTML}{9e2b25}
 
 % Layouting stuff
 \usepackage{relsize}
@@ -66,10 +71,11 @@
 \setbeamertemplate{navigation symbols}{}
 \usefonttheme{professionalfonts}
 \usefonttheme{serif}
-\setbeamercolor{title}{bg=uniblue,fg=white}
-\setbeamercolor{frametitle}{bg=uniblue, fg=white}
+\setbeamercolor{title}{bg=backgroundtheme,fg=backgroundthemecontrast}
+\setbeamercolor{frametitle}{bg=backgroundtheme,fg=backgroundthemecontrast}
+\setbeamercolor*{mini frame}{fg=backgroundthemecontrast,bg=black}
 % \setbeamercolor{section in head/foot}{fg=black, bg=white}
-% \usepackage{pgfpages}
+\usepackage{pgfpages}
 % \setbeameroption{show notes on second screen}
 
 % Title page to insert before each section
@@ -129,9 +135,9 @@
     xleftmargin=0pt,
     showstringspaces=false,
     basicstyle=\small\ttfamily,
-    keywordstyle=[1]{\color{uniblue}},
-    texcsstyle=*\color{uniblue},
-    keywordstyle=[2]{\color{unired}},
+    keywordstyle=[1]{\color{highlighttheme}},
+    texcsstyle=*\color{highlighttheme},
+    keywordstyle=[2]{\color{markupred}},
     keywordstyle=[3]{\color{yellow}},
     keywordstyle=[4]{\color{green}},
     commentstyle=\color{comment},
@@ -165,7 +171,7 @@
     boxsep=0pt,
     top=0pt,bottom=0pt,
     left=0pt,
-    frame code={\draw[unired,ultra thick,line cap=round]([xshift=1em,yshift=0.5ex]frame.north east) -- ([xshift=1em,yshift=-0.5ex]frame.south east);},
+    frame code={\draw[markupred,ultra thick,line cap=round]([xshift=1em,yshift=0.5ex]frame.north east) -- ([xshift=1em,yshift=-0.5ex]frame.south east);},
 }
 \newtcolorbox{kindawrong}{
     colback=white,
@@ -176,18 +182,18 @@
     boxsep=0pt,
     top=0pt,bottom=0pt,
     left=0pt,
-    frame code={\draw[uniorange,ultra thick,line cap=round]([xshift=1em,yshift=0.5ex]frame.north east) -- ([xshift=1em,yshift=-0.5ex]frame.south east);},
+    frame code={\draw[markuporange,ultra thick,line cap=round]([xshift=1em,yshift=0.5ex]frame.north east) -- ([xshift=1em,yshift=-0.5ex]frame.south east);},
 }
 % Kinda wrong horizontal rule
 \newcommand{\kwrule}{
     \begin{tikzpicture}
-        \draw[uniorange,ultra thick,line cap=round](0,0) -- (\linewidth,0);
+        \draw[markuporange,ultra thick,line cap=round](0,0) -- (\linewidth,0);
     \end{tikzpicture}
 }
 % Wrong horizontal rule
 \newcommand{\wrongrule}{
     \begin{tikzpicture}
-        \draw[unired,ultra thick,line cap=round](0,0) -- (\linewidth,0);
+        \draw[markupred,ultra thick,line cap=round](0,0) -- (\linewidth,0);
     \end{tikzpicture}
 }
 % Invisible horizontal rule for spacing hacks
@@ -201,11 +207,39 @@
 \title{Du setzt deine \LaTeX-Formeln falsch}
 \subtitle{Normen, Styleguides und Nitpicks}
 \author{Hans Schülein}
-\institute{Offenes Informatikkolloquium \textperiodcentered{} Lightning Talks}
-\date{Sommersemester 2022}
+\institute{Tage der digitalen Freiheit \textperiodcentered{} Tübingen}
+\date{2025-07-26}
 
 \begin{frame}[fragile]
     \titlepage
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Wer bin ich?}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \includegraphics[width=\textwidth]{images/me.png}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \textit{Hallo, ich bin Hans.}
+
+            ~
+
+            Ich habe habe irgendwas mit Computern studiert.
+
+            ~
+
+            Ich mag Textsatz.
+
+            ~
+
+            Ich mag Formeln.
+
+            ~
+
+            Ich mag Regeln.
+        \end{column}
+    \end{columns}
 \end{frame}
 
 % == == == == == == == == == == == == == == == == == == == == == == == == == == == ==
@@ -242,6 +276,8 @@
 
     \includegraphics[height=0.32\textwidth]{images/iso-extract}\hfill
     \includegraphics[height=0.32\textwidth]{images/din-extract}
+    \note[item]{DIN 1338}
+    \note[item]{ISO 80000-2}
 \end{frame}
 
 % == == == == == == == == == == == == == == == == == == == == == == == == == == == ==
@@ -279,7 +315,7 @@
     \pause
     % Hard coded coordinates. I know.
     \begin{tikzpicture}[remember picture, overlay]
-        \draw[->, thick, color=unired] ($(current page.east)-(6em,8ex)$)  node[outer sep=0.2ex,rotate=20,anchor=east] {\Large\bfseries Falsch} to[out=20,in=-100] ($(current page.east) + (-1.6em,1ex)$);
+        \draw[->, thick, color=markupred] ($(current page.east)-(6em,8ex)$)  node[outer sep=0.2ex,rotate=20,anchor=east] {\Large\bfseries Falsch} to[out=20,in=-100] ($(current page.east) + (-1.6em,1ex)$);
     \end{tikzpicture}
 \end{frame}
 
@@ -374,6 +410,8 @@ v_\mathrm{e}=\sqrt{\frac{2GM_\mathrm{Earth}}{r_\mathrm{spacecraft}}}
     \begin{equation*}
         v_\mathrm{e} = \sqrt{\frac{2GM_\mathrm{Earth}}{r_\mathrm{spacecraft}}}
     \end{equation*}
+    \note[item]{Variable vs. Bezeichnung}
+    \note[item]{Escape Velocity}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -398,6 +436,7 @@ a_\mathrm{max} = \max(a_1, \dots, a_n)
     \begin{equation*}
         \gamma_\mathrm{n} = \frac{P_\mathrm{s}}{P_\mathrm{n}}
     \end{equation*}
+    \note[item]{SNR = Signal Power / Noise Power}
 
     \begin{lstlisting}
 a_{i, \mathrm{max}}
@@ -581,6 +620,9 @@ f (x + 2) \cdot f \mleft( \frac{x}{2} + 2 \mright)
     \begin{equation*}
         Q = \{Q\} \cdot [Q]
     \end{equation*}
+    \note[item]{Größe $Q$}
+    \note[item]{numerische Wert der Größe}
+    \note[item]{Einheit}
     \pause
     \begin{equation*}
         [m] = \unit{\kilo\gram}
@@ -628,10 +670,10 @@ f(x, y, z) \approx 3.1415926
     \begin{lstlisting}
 \usepackage{siunitx} % Preamble
 \sisetup{output-decimal-marker={,}} % Preamble
-\pi \approx \num{3,1415926}
+\pi \approx \num{3.1415926}
     \end{lstlisting}
     \begin{equation*}
-        \pi \approx \num[output-decimal-marker={,}]{3,1415926}
+        \pi \approx \num[output-decimal-marker={,}]{3.1415926}
     \end{equation*}
 \end{frame}
 
@@ -721,10 +763,10 @@ v(t) = \dot x = \frac{dx}{dt}
 
     \begin{lstlisting}
 \usepackage[ISO,spaced]{diffcoeff} % Preamble
-[...] \dl3 t                 \diff{x}{t}
-        \end{lstlisting}
+[...] \dl t                 \diff{x}{t}
+    \end{lstlisting}
     \begin{equation*}
-        \F[x(t)]=\int_{-\infty}^\infty x(t)\e^{-\i 2 \pi f t}\dl3 t
+        \F[x(t)]=\int_{-\infty}^\infty x(t)\e^{-\i 2 \pi f t}\dl t
         \qquad\qquad
         v(t) = \dot x = \diff{x}{t}
     \end{equation*}
@@ -744,6 +786,7 @@ v(t) = \dot x = \frac{dx}{dt}
 \newcommand{\transpose}{\mathsf{T}}
 \begin{frame}[fragile]
     \frametitle{Transponieren}
+    \note[item]{Styleguides definieren nur die Form}
     \begin{wrong}
         \begin{lstlisting}
 \mat P_{k|k-1}=\mat F_k\mat P_{k-1|k-1}\mat F_k^T+\mat Q_k
@@ -885,7 +928,7 @@ Die Bewegung findet in $x$-Richtung statt. [...]
     \begin{itemize}
         \item $x$ zeitabhängig ist,
         \item $x$ immer größer wird und
-        \item der Pöbel mit dem 9-Euro-Ticket nach Sylt kommt.
+        \item Kaffee besser schmeckt als Mate.
     \end{itemize}
 \end{frame}
 
@@ -997,9 +1040,9 @@ Süßigkeit
 
     \begin{lstlisting}[escapechar=\@]
 Vielleicht...vielleicht auch nicht. % @\color{comment}\textsc{uosg}@
-Vielleicht … vielleicht auch nicht. % @\color{comment}\textsc{duden}, \textsc{osg}@
+Vielleicht … vielleicht auch nicht. % @\color{comment}\textsc{duden}, \textsc{ogs}@
 Vielleicht \dots{} vielleicht auch nicht.
-Vielleicht ... vielleicht auch nicht. % @\color{comment}\textsc{ap}, \textsc{duden}, \textsc{osg}@
+Vielleicht ... vielleicht auch nicht. % @\color{comment}\textsc{ap}, \textsc{duden}, \textsc{ogs}@
 Vielleicht .@\color{comment}\textvisiblespace{}@.@\color{comment}\textvisiblespace{}@. vielleicht auch nicht. % @\color{comment}\textsc{cms}, \textsc{apa}@
         \end{lstlisting}
 
@@ -1012,10 +1055,18 @@ Vielleicht .@\color{comment}\textvisiblespace{}@.@\color{comment}\textvisiblespa
     Vielleicht ... vielleicht auch nicht.
 
     Vielleicht . . . vielleicht auch nicht.\\[2ex]
+
+    \note[item]{CMS = Chicago Manual of Style}
+    \note[item]{UOSG = University of Oxford Style Guide}
+    \note[item]{OGS = Oxford Guide to Style}
 \end{frame}
 
 \begin{frame}[fragile]
     \frametitle{Binde- und Gedankenstriche}%
+    \note[item]{Hyphen Bindestrich}
+    \note[item]{en-dash Halbgeviertstrich}
+    \note[item]{em-dash Geviertstrich}
+    \note[item]{Elements of Typographic Style // Bringhurst}
     \begin{wrong}
         \begin{lstlisting}
 Das Ost-West-Gefälle bleibt - trotz politischer Maßnahmen - weiterhin relevant.
@@ -1043,8 +1094,7 @@ The east-west divide remains relevant---despite [...].
 \begin{frame}[fragile]
     \frametitle{Sprache setzen}%
     \begin{justify}
-        Alle Menschen sind frei und gleich an Würde und Rechten geboren.
-        Sie sind mit Vernunft und Gewissen begabt und sollen einander im Geist der Brüderlichkeit begegnen.
+        Alle Menschen sind frei und gleich an Würde und Rechten ge\-boren.~Sie sind mit Vernunft und Gewissen begabt und sollen~ei\-nan\-der~im Geist der Brüderlichkeit begegnen.
     \end{justify}
 
     \begin{lstlisting}
@@ -1088,7 +1138,7 @@ The east-west divide remains relevant---despite [...].
             Aprikose                       & Nein          & Ja            & Ja                  \\ \hline
             Nektarine                      & Ja            & Nein          & Ja                  \\ \hline
             Pfirsich                       & Ja            & Ja            & Ja                  \\ \hline \hline
-            ???                            & Nein          & Nein          & ???                 \\ \hline
+            ???                            & Nein          & Nein          & /                   \\ \hline
             Gorilla                        & Ja            & Ja            & Ja                  \\ \hline
         \end{tabularx}
 
@@ -1104,7 +1154,7 @@ The east-west divide remains relevant---despite [...].
             Aprikose  & Nein & Ja   & Ja                          \\
             Nektarine & Ja   & Nein & Ja                          \\
             Pfirsich  & Ja   & Ja   & Ja                          \\ \midrule
-            ???       & Nein & Nein & ???                         \\
+            ???       & Nein & Nein & /                           \\
             Gorilla   & Ja   & Ja   & Ja                          \\ \bottomrule
         \end{tabular}
     \end{multicols}
@@ -1118,7 +1168,7 @@ The east-west divide remains relevant---despite [...].
     Aprikose  & Nein & Nein   & Ja                        \\
     Nektarine & Ja   & Ja     & Ja                        \\
     Pfirsich  & Ja   & Nein   & Ja                        \\ \midrule
-    ???       & Nein & Ja     & ???                       \\
+    ???       & Nein & Ja     & /                         \\
     Gorilla   & Ja   & Ja     & Ja                        \\ \bottomrule
 \end{tabular}
     \end{lstlisting}
@@ -1126,6 +1176,9 @@ The east-west divide remains relevant---despite [...].
 
 \begin{frame}[fragile]
     \frametitle{Abbildungs- und Tabellenpositionierung}
+    \note[item]{Unterbricht Textfluss}
+    \note[item]{Hierarchie}
+    \note[item]{Bessere Seitenumbruch}
     \begin{wrong}
         \begin{itemize}
             \item Vor dem Text, sodass man zurückblättern muss,
@@ -1156,7 +1209,7 @@ The east-west divide remains relevant---despite [...].
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{Hurenkinder und Schusterjungen}
+    \frametitle{Schusterjungen und Hurenkinder}
     \begin{figure}
         \centering%
         \begin{subfigure}{.35\textwidth}
@@ -1176,6 +1229,7 @@ The east-west divide remains relevant---despite [...].
     \begin{lstlisting}
 \usepackage[all]{nowidow} % Preamble
     \end{lstlisting}
+    \note[item]{Schusterjunge = Orphan}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -1197,6 +1251,9 @@ The east-west divide remains relevant---despite [...].
     \end{multicols}
     \pause
     Kein wissenschaftliches Style Manual will das aber tatsächlich!
+    \note[item]{Kapitälchen}
+    \note[item]{Mediävalziffern}
+    \note[item]{Nicht bei W.}
 \end{frame}
 
 % == == == == == == == == == == == == == == == == == == == == == == == == == == == ==
@@ -1342,7 +1399,7 @@ Every empire\todo{source} grows until its reach exceeds its grasp.
 \begin{frame}[fragile]
     \frametitle{newcomputermodern}
     \begin{multicols}{2}
-        \small\justifying{\fontspec{Latin Modern Roman 10 Regular}
+        \small\justifying{\fontspec{LMRoman10-Regular}
             Als Gregor Samsa eines Morgens aus unruhigen Träumen erwachte, fand er sich in seinem Bett zu einem ungeheueren Ungeziefer verwandelt.
             Er lag auf seinem panzerartig harten Rücken und sah, wenn er den Kopf ein wenig hob, seinen gewölbten, braunen, von bogenförmigen Versteifungen geteilten Bauch, auf dessen Höhe sich die Bettdecke, zum gänzlichen Niedergleiten bereit, kaum noch erhalten konnte.
         }
@@ -1352,7 +1409,7 @@ Every empire\todo{source} grows until its reach exceeds its grasp.
     \end{multicols}
     \begin{itemize}
         \item Book Weight
-        \item Unicode (ελληνική Русский אבגדהושׁשּׂלּצּ \smash{x̧̗̖̀́̃̂} ☭ Ⳃ ʛ)
+        \item Unicode (ελληνική Україна ⠅⠆⠇⠝⠞ \smash{x̧̗̖̀́̃̂} ☭ Ⳃ ʛ)
     \end{itemize}
 \end{frame}
 
@@ -1382,49 +1439,18 @@ Every empire\todo{source} grows until its reach exceeds its grasp.
 \miniframesoff
 \begin{frame}[fragile]
     \frametitle{Dankeschön}
-    Immer nach spezifischen Anforderungen und Styleguides fragen!\\[4ex]
+    \note{Fragen / Ergänzungen?}
+    \note{Sticker}
+    Immer nach spezifischen Anforderungen und Styleguides fragen!\\\vfill
 
-    \begin{itemize}
-        \item Fragen?
-        \item Ergänzungen?
-    \end{itemize}
+    \pause
 
-\end{frame}
+    \begin{tabularx}{\linewidth}{@{}CCC@{}}
+        Slides                                                       & Website                                   & Mastodon                                                    \\
+        \qrcode[hyperlink,version=5]{github.com/kamik423/latex-talk} & \qrcode[hyperlink,version=5]{hans.coffee} & \qrcode[hyperlink,version=5]{mastodon.social/@SherlockHans} \\
+        \url{github.com/kamik423/latex-talk}                         & \url{hans.coffee}                         & \url{mastodon.social/@SherlockHans}                         \\
+    \end{tabularx}
 
-% This gave images rounded corners but was later dropped.
-\newcommand{\roundpanda}[2][0ex]{%
-    \begin{tikzpicture}
-        \begin{scope}
-            \clip [rounded corners=#1] (0,0) rectangle coordinate (centerpoint) (.24\linewidth,.24\linewidth);
-            \node [inner sep=0pt] at (centerpoint) {\includegraphics[width=.24\linewidth]{images/pandas/#2}};
-        \end{scope}
-    \end{tikzpicture}%
-}
-
-% No copyright violation intended
-\begin{frame}[fragile]
-    \frametitle{Rote Pandas? Rote Pandas!}
-
-    \roundpanda{a}
-    \hfill
-    \roundpanda{b}
-    \hfill
-    \roundpanda{c}
-    \hfill
-    \roundpanda{kim}
-    \\[.0133333\linewidth-.1ex]
-    \roundpanda{e}
-    \hfill
-    \roundpanda{f}
-    % \hfill
-    % \roundpanda{g}
-    \hfill
-    \roundpanda{h}
-    \hfill
-    \raisebox{.12\linewidth-0.55ex}{\qrcode[height=.24\linewidth]{https://t.me/DiplomacyUpdateBot}}
-
-    \url{https://t.me/DiplomacyUpdateBot} \hfill \texttt{@DiplomacyUpdateBot}
 \end{frame}
 
 \end{document}
-
